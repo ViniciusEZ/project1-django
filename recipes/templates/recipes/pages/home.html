@@ -1,21 +1,13 @@
-{% include 'recipes/partials/_head.html' %}
+{% extends 'global/base.html' %}
 
-<body>
+{% block title %}Home | {% endblock %}
 
-    {% include 'recipes/partials/_header.html' %}
+{% block content%}
 
-    <div class="search-container">
-    
-        <div class="container">
-            <form action="" class="search-form">
-                <input type="search" class="search-input" name="search" placeholder="Type to search">
+<div class="main-content main-content-list container">
+    {% for recipe in recipes %}
+        {% include 'recipes/partials/_recipe.html'%}
+    {% endfor %}
+</div>
 
-                <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
-
-            </form>
-        </div>
-
-    </div>
-</body>
-
-</html>
+{% endblock %}
