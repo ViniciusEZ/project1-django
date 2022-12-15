@@ -26,3 +26,39 @@ class RecipeSearchViewTest(RecipeTestBase):
         self.assertIn(
             'Search for &quot;testando&quot;',
             response.content.decode('utf-8'))
+        
+    
+    def test_recipe_search_can_find_recipe_by_title(self):
+        title1 = 'This is recipe one'
+        title2 = 'This is recipe two'
+        
+        recipe1 = self.make_recipe(
+            slug='one-1',
+            title=title1,
+            author_data = {'username': 'author1'}
+        )  
+        
+        recipe2 = self.make_recipe(
+            slug='two-2',
+            title=title2,
+            author_data = {'username': 'author2'}
+        )  
+        
+        search_url = reverse("recipes:search")
+        response1 = self.client.get(f'{search_url}?q={title1}')
+        response2 = self.client.get(f'{search_url}?q={title2}')
+        response_both = self.client.get(f'{search_url}?q=This')
+        
+        self.assertIn(recipe1, response1.context['recipes'])
+        self.assertNotIn(recipe2, response1.context['recipes'])
+        
+        self.assertIn(recipe2, response2.context['recipes'])
+        self.assertNotIn(recipe1, response2.context['recipes'])
+        
+        self.assertIn(recipe2, response_both.context['recipes'])
+        self.assertIn(recipe1, response_both.context['recipes'])
+        
+      
+        
+        
+        
