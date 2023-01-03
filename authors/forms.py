@@ -32,6 +32,43 @@ class RegisterForm(forms.ModelForm):
         add_placeholder(self.fields['last_name'], 'Type your last name here')
         add_placeholder(self.fields['email'], 'Type your email here')
     
+    
+    username = forms.CharField(
+        label='Username',
+        error_messages={
+            'required': 'This field must not be empty.', 
+            'min_length': 'Username must have at least 3 characters.',
+            'max_length': 'Username must have at most 150 characters.'
+        },
+        help_text='The length of Username should be between 3 and 150 characters.',
+        min_length=3,
+        max_length=150,
+    )
+    
+    
+    first_name = forms.CharField(
+        error_messages={
+            'required': 'Write your first name'
+            },
+        label='First name'
+    )
+    
+    last_name = forms.CharField(
+        error_messages={
+            'required': 'Write your last name'
+            },
+        label='Last name'
+    )
+    
+    email = forms.EmailField(
+        error_messages={
+            'required': 'E-mail is required'
+        },
+        label='E-mail',
+        help_text = ('The e-mail must be valid.')
+    )
+    
+    
     password = forms.CharField(
         required=True,
         widget=forms.PasswordInput(
@@ -44,6 +81,7 @@ class RegisterForm(forms.ModelForm):
                    'One uppercase letter, one lowercase letter '
                    'and one number'),
         validators=[strong_password],
+        label='Password',
     )
     
     
@@ -54,6 +92,7 @@ class RegisterForm(forms.ModelForm):
                 'placeholder':'Repeat your password',
             },
         ),
+        error_messages={'required': 'Please, repeat your password'},
         label='Confirmation Password',
     )
     
@@ -67,25 +106,6 @@ class RegisterForm(forms.ModelForm):
             'password',
             ]
         
-        labels = {
-            'first_name': 'First name',
-            'last_name': 'Last name',
-            'username': 'Username',
-            'email': 'E-mail',
-            'password': 'Password',
-        }
-        
-        help_texts = {
-            'email': 'The e-mail must be valid.'
-        }
-        
-        
-        error_messages = {
-            'username': {
-                'required': 'This field must not be empty.',
-            }
-        }
-        
         #widgets: dict = {
         #    'password': forms.PasswordInput(attrs={
         #        "placeholder": 'Type your password here.',
@@ -93,30 +113,17 @@ class RegisterForm(forms.ModelForm):
         #}
         
         
-    def clean_password(self):
-        data = self.cleaned_data.get("password", '')
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '')
+        existing_user = User.objects.filter(email=email).exists()
         
-        if 'atencao' in data:
+        if existing_user:
             raise ValidationError(
-                'Não pode %(value)s no password',
-                code='invalid',
-                params={'value': '"atencao"'}
-                )
+                'User email is already in use',
+                code='invalid'
+            )
         
-        return data
-    
-    
-    def clean_first_name(self):
-        data = self.cleaned_data.get("first_name", '')
-        
-        if 'Vinicius' in data:
-            raise ValidationError(
-                'Não pode %(value)s no first name',
-                code='invalid',
-                params={'value': '"Vinicius"'}
-                )
-        
-        return data
+        return email
     
     def clean(self):
         cleaned_data = super().clean()
