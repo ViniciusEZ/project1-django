@@ -53,7 +53,7 @@ class AuthorRecipeForm(forms.ModelForm):
         title = cd.get('title')
         description = cd.get('description')
         
-        if len(title) < 5:
+        if title is None or len(title) < 5:
             self._merrors['title'].append('Title must have at least 5 characters.')
         
         if title == description:
