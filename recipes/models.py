@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.urls import reverse
-
+from tag.models import Tag
 # Create your models here.
 
 class Category(models.Model):
@@ -30,7 +30,7 @@ class Recipe(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True,
                                 blank=True, default=None)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    
+    tags = models.ManyToManyField(Tag)
     
     def __str__(self) -> str:
         return self.title
